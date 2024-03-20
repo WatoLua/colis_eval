@@ -1,6 +1,9 @@
 package task
 
-import "fmt"
+import (
+	"fmt"
+	"errors"
+)
 
 type TaskStatus int
 
@@ -24,21 +27,28 @@ func (ts TaskStatus) String() string {
 }
 
 type Task struct {
-	id          int        `json:id`
+	Id          int64        `json:id`
 	Title       string     `json:title`
 	Description string     `description`
 	Status      TaskStatus `json:status`
 }
 
 func (t *Task) GetId() int {
-	return t.id
+	return t.Id
 }
 
-func (t *Task) IsValidTask() bool {
-	return (t.id > -1 &&
-		t.Title != "" &&
-		t.Description != "" &&
-		0 < t.Status && t.Status < 4)
+func (t *Task) IsValid() (bool, error) {
+	if (t.Title == "") {
+		return false, errors.New("Missing value for Title field")
+	}
+	if (t.Description == "") {
+		return false, errors.New("Missing value for Title field")
+	}
+	if (t.Status <= 0 || t.Status >= 4) {
+		return false, errors.New("Missing or Wrong value for Status field")
+	}
+
+	return true, nil
 }
 
 func (t *Task) String() string {
