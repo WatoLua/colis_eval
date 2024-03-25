@@ -1,8 +1,8 @@
 package task
 
 import (
-	"fmt"
 	"errors"
+	"fmt"
 )
 
 type TaskStatus int
@@ -27,24 +27,24 @@ func (ts TaskStatus) String() string {
 }
 
 type Task struct {
-	Id          int64        `json:id`
-	Title       string     `json:title`
-	Description string     `description`
-	Status      TaskStatus `json:status`
+	Id          int64      `json:"id" db:"id"`
+	Title       string     `json:"title" db:"title"`
+	Description string     `json:"description" db:"description"`
+	Status      TaskStatus `json:"status" db:"status"`
 }
 
-func (t *Task) GetId() int {
+func (t *Task) GetId() int64 {
 	return t.Id
 }
 
 func (t *Task) IsValid() (bool, error) {
-	if (t.Title == "") {
+	if t.Title == "" {
 		return false, errors.New("Missing value for Title field")
 	}
-	if (t.Description == "") {
+	if t.Description == "" {
 		return false, errors.New("Missing value for Title field")
 	}
-	if (t.Status <= 0 || t.Status >= 4) {
+	if t.Status <= 0 || t.Status >= 4 {
 		return false, errors.New("Missing or Wrong value for Status field")
 	}
 
@@ -53,5 +53,5 @@ func (t *Task) IsValid() (bool, error) {
 
 func (t *Task) String() string {
 	return fmt.Sprintf("[id = %v, Title=\"%v\", Description=\"%v\", Status=\"%v\"",
-		t.id, t.Title, t.Description, t.Status)
+		t.Id, t.Title, t.Description, t.Status)
 }
