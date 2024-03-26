@@ -5,5 +5,5 @@ type TaskRepository interface {
 	Get(id int64) (Task, error)
 	GetAll() (map[int64]Task, error)
 	Update(t Task) error
-	Delete(t Task) error
+	Delete(id int64) error
 }

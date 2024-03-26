@@ -20,7 +20,7 @@ func NewTaskPsqlRepository(connection *sqlx.DB) TaskRepository {
 func (repo *TaskPsqlRepository) Create(t Task) (int64, error) {
 
 	query := "insert into task (id, title, description, status)" +
-		"values (default, :title, :description, status)"
+		"values (default, :title, :description, :status) returning id"
 
 	params := map[string]interface{}{
 		"title":       t.Title,
@@ -35,7 +35,6 @@ func (repo *TaskPsqlRepository) Create(t Task) (int64, error) {
 	}
 
 	defer rows.Close()
-
 	var id int64
 	if rows.Next() {
 		err := rows.Scan(&id)
@@ -130,11 +129,11 @@ func (repo *TaskPsqlRepository) Update(t Task) error {
 	return nil
 }
 
-func (repo *TaskPsqlRepository) Delete(t Task) error {
+func (repo *TaskPsqlRepository) Delete(id int64) error {
 	query := "delete from task where id = :id"
 
 	params := map[string]interface{}{
-		"id": t.Id,
+		"id": id,
 	}
 
 	res, err := repo.connection.NamedExec(query, params)

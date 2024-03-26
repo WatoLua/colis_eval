@@ -1,8 +1,10 @@
 package postgres
 
 import (
-	"database/sql"
 	"fmt"
+
+	"github.com/jmoiron/sqlx"
+	_ "github.com/lib/pq"
 )
 
 const (
@@ -13,9 +15,9 @@ const (
 	dbname   = "eval"
 )
 
-var globalPsqlConnection *sql.DB = nil
+var globalPsqlConnection *sqlx.DB = nil
 
-func GetConnection() *sql.DB {
+func GetPostgresConnection() *sqlx.DB {
 
 	if globalPsqlConnection == nil {
 		globalPsqlConnection = createConnection()
@@ -27,12 +29,12 @@ func GetConnection() *sql.DB {
 	return globalPsqlConnection
 }
 
-func createConnection() *sql.DB {
+func createConnection() *sqlx.DB {
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
 		"password=%s dbname=%s sslmode=disable",
 		host, port, user, password, dbname)
 
-	db, err := sql.Open("postgres", psqlInfo)
+	db, err := sqlx.Open("postgres", psqlInfo)
 	if err != nil {
 		panic(err)
 	}
