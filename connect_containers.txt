@@ -1,0 +1,3 @@
+docker network create evalNetwork
+docker network connect evalNetwork myrtea-postgres
+docker run --name eval_api -p 7800:7800 --network evalNetwork eval_api:latest

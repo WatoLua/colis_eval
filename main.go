@@ -3,7 +3,7 @@ package main
 import (
 	"net/http"
 
-	postgres "app/internal/connections"
+	"app/internal/postgres"
 	"app/internal/task"
 
 	"github.com/go-chi/chi/v5"
@@ -11,11 +11,20 @@ import (
 
 func main() {
 
-	r := chi.NewRouter()
+	infos := postgres.DBInfos{
+		Host:     "172.19.0.2",
+		Port:     5432,
+		User:     "postgres",
+		Password: "postgres",
+		Dbname:   "eval",
+	}
 
-	connection := postgres.GetPostgresConnection()
+	connection := postgres.GetConnection(infos)
+	defer postgres.CloseConnection()
 	repository := task.NewTaskPsqlRepository(connection)
 	taskHandler := task.NewTaskHandler(&repository)
+
+	r := chi.NewRouter()
 
 	r.Get("/isAlive", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("API is alive\n"))
